@@ -1,6 +1,8 @@
 # settings
 export name="fast-ai"
 export cidr="0.0.0.0/0"
+# change to availability zone of your choice
+export availability_zone="us-east-1a"
 
 hash aws 2>/dev/null
 if [ $? -ne 0 ]; then
@@ -22,7 +24,7 @@ export internetGatewayId=`aws ec2 create-internet-gateway --query 'InternetGatew
 aws ec2 create-tags --resources $internetGatewayId --tags --tags Key=Name,Value=$name-gateway
 aws ec2 attach-internet-gateway --internet-gateway-id $internetGatewayId --vpc-id $vpcId
 
-export subnetId=`aws ec2 create-subnet --vpc-id $vpcId --cidr-block 10.0.0.0/28 --query 'Subnet.SubnetId' --output text`
+export subnetId=`aws ec2 create-subnet --availability-zone $availability_zone --vpc-id $vpcId --cidr-block 10.0.0.0/28 --query 'Subnet.SubnetId' --output text`
 aws ec2 modify-subnet-attribute --subnet-id $subnetId --map-public-ip-on-launch
 aws ec2 create-tags --resources $subnetId --tags --tags Key=Name,Value=$name-subnet
 
