@@ -55,22 +55,25 @@ cat >user-data.tmp <<EOF
 #!/bin/sh
 echo AWSAccessKeyId=$AWS_ACCESS_KEY > /root/.aws.creds
 echo AWSSecretKey=$AWS_SECRET_KEY >> /root/.aws.creds
+export TERM="linux"
+rm /var/lib/apt/lists/* -vf 
+echo "apt-getting" >> /root/log.txt 2>&1
+apt-get update >> /root/log.txt 2>&1
+apt-get install -y jq  >> /root/log.txt 2>&1
+apt-get install -y python-pip python-setuptools >> /root/log.txt 2>&1
+apt-get install -y git >> /root/log.txt 2>&1
 
-apt-get update
-apt-get install -y jq
-apt-get install -y python-pip python-setuptools
-apt-get install -y git
-
-pip install awscli
+pip install awscli >> /root/log.txt 2>&1
 
 cd /root
+echo "cloning_file" >> /root/log.txt 2>&1
 git clone --depth=1 https://github.com/slavivanov/ec2-spotter.git
 echo Got spotter scripts from github.
 
 cd ec2-spotter
 
-echo Swapping root volume
-./ec2spotter-remount-root  --force 1 --vol_name ${ROOT_VOL_NAME} --vol_region ${ROOT_REGION} --elastic_ip $ec2spotter_elastic_ip 
+echo "Swapping root volume" >> /root/log.txt 2>&1
+./ec2spotter-remount-root  --force 1 --vol_name ${ROOT_VOL_NAME} --vol_region ${ROOT_REGION} --elastic_ip $ec2spotter_elastic_ip >> /root/log.txt 2>&1
 EOF
 
 userData=$(base64 user-data.tmp | tr -d '\n');
@@ -90,7 +93,7 @@ cat >specs.tmp <<EOF
       "Ebs": {
         "DeleteOnTermination": true,
         "VolumeType": "gp2",
-        "VolumeSize": 8
+        "VolumeSize": 128
       }
     }
   ],
