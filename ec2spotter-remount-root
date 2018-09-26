@@ -163,7 +163,9 @@ echo "Attaching volume $PERSISTENT_ROOT_VOLUME as /dev/sdf"
 #${APIBIN}/ec2-attach-volume $PERSISTENT_ROOT_VOLUME -d /dev/sdf --instance $INSTANCE_ID || exit -1
 aws ec2 attach-volume --volume-id $PERSISTENT_ROOT_VOLUME --instance-id $INSTANCE_ID --device /dev/sdf --region ${SPOT_REGION} || exit -1
 
-while ! lsblk /dev/xvdf
+BLKDEVICE=/dev/xvdf
+BLKDEVICE=/dev/nvme1n1
+while ! lsblk $BLKDEVICE
 do
   echo "waiting for device to attach"
   sleep 5
@@ -178,6 +180,7 @@ rm $AWS_CREDENTIAL_FILE
 
 # Ready up for the swap
 DEVICE=/dev/xvdf1
+DEVICE=/dev/nvme1n1p1
 NEWMNT=/permaroot
 OLDMNT=old-root
 e2label $DEVICE permaroot

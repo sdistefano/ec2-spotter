@@ -67,12 +67,13 @@ pip install awscli >> /root/log.txt 2>&1
 
 cd /root
 echo "cloning_file" >> /root/log.txt 2>&1
-git clone --depth=1 https://github.com/slavivanov/ec2-spotter.git
+git clone --depth=1 https://github.com/daanzu/ec2-spotter.git
 echo Got spotter scripts from github.
 
 cd ec2-spotter
 
 echo "Swapping root volume" >> /root/log.txt 2>&1
+echo ./ec2spotter-remount-root  --force 1 --vol_name ${ROOT_VOL_NAME} --vol_region ${ROOT_REGION} --elastic_ip $ec2spotter_elastic_ip >> /root/log.txt 2>&1
 ./ec2spotter-remount-root  --force 1 --vol_name ${ROOT_VOL_NAME} --vol_region ${ROOT_REGION} --elastic_ip $ec2spotter_elastic_ip >> /root/log.txt 2>&1
 EOF
 
