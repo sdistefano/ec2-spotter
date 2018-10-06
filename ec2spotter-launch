@@ -8,6 +8,11 @@ cd $(dirname $0)
 
 . $1 || exit -1
 
+if [ "$2" ]
+then
+  ec2spotter_instance_type=$2
+fi
+
 # New instance:
 # Desired launch zone
 LAUNCH_ZONE=$ec2spotter_launch_zone
@@ -30,6 +35,7 @@ ROOT_ZONE=$ec2spotter_volume_zone
 ROOT_REGION=$(echo $ROOT_ZONE | sed -e 's/.$//')
 
 
+echo "Launching instance type: $ec2spotter_instance_type"
 #echo "ROOT_VOL_NAME=${ROOT_VOL_NAME}; ROOT_ZONE=${ROOT_ZONE}; ROOT_REGION=${ROOT_REGION}; "
 #echo "LAUNCH_ZONE=${LAUNCH_ZONE}; LAUNCH_REGION=${LAUNCH_REGION}; PUB_KEY=${PUB_KEY}"
 
@@ -110,7 +116,7 @@ cat >specs.tmp <<EOF
 EOF
 
 SPOT_REQUEST_ID=$(aws ec2 request-spot-instances --launch-specification file://specs.tmp --spot-price $ec2spotter_bid_price --output="text" --query="SpotInstanceRequests[*].SpotInstanceRequestId" --region ${LAUNCH_REGION})
-echo $SPOT_REQUEST_ID
+echo "Spot request id: $SPOT_REQUEST_ID"
 # Clean up
 rm user-data.tmp
 rm specs.tmp
