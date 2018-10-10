@@ -24,6 +24,10 @@ case $key in
     ec2spotter_elastic_ip="$2"
     shift # past argument
     ;;
+    --instance_name)
+    ec2spotter_instance_name="$2"
+    shift # past argument
+    ;;
     *)
             # unknown option
     ;;
@@ -60,8 +64,15 @@ export AWS_SECRET_KEY=$AWSSecretKey
 # acquire the elastic ip
 if ! [ "$ec2spotter_elastic_ip"x = x ]
 then
-	aws ec2 associate-address --instance-id $INSTANCE_ID --allocation-id $ec2spotter_elastic_ip --allow-reassociation --region ${SPOT_REGION}
-	echo "Elastic IP associated."
+    aws ec2 associate-address --instance-id $INSTANCE_ID --allocation-id $ec2spotter_elastic_ip --allow-reassociation --region ${SPOT_REGION}
+    echo "Elastic IP associated."
+fi
+
+# set the instance name
+if ! [ "$ec2spotter_instance_name"x = x ]
+then
+    aws ec2 create-tags --region $SPOT_REGION --resources $INSTANCE_ID --tags "Key=Name,Value=${ec2spotter_instance_name}"
+	echo "Instance name set."
 fi
 
 echo "Looking for a volume in $ROOT_REGION with Name = $ROOT_VOL_NAME"
