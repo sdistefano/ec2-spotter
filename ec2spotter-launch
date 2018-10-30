@@ -57,6 +57,16 @@ then
   exit -1;
 fi
 
+if [ "$ec2spotter_instance_name" ]
+then
+  INSTANCE_NAME_PARAM="--instance_name $ec2spotter_instance_name"
+fi
+
+if [ "$ec2spotter_elastic_ip" ]
+then
+  ELASTIC_IP_PARAM="--elastic_ip $ec2spotter_elastic_ip"
+fi
+
 cat >user-data.tmp <<EOF
 #!/bin/sh
 echo AWSAccessKeyId=$AWS_ACCESS_KEY > /root/.aws.creds
@@ -79,7 +89,7 @@ echo Got spotter scripts from github.
 cd ec2-spotter
 
 echo "Swapping root volume" >> /root/log.txt 2>&1
-./ec2spotter-remount-root  --force 1 --vol_name ${ROOT_VOL_NAME} --vol_region ${ROOT_REGION} --elastic_ip $ec2spotter_elastic_ip >> /root/log.txt 2>&1
+./ec2spotter-remount-root  --force 1 --vol_name ${ROOT_VOL_NAME} --vol_region ${ROOT_REGION} $INSTANCE_NAME_PARAM $ELASTIC_IP_PARAM >> /root/log.txt 2>&1
 EOF
 
 userData=$(base64 user-data.tmp | tr -d '\n');
