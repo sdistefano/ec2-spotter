@@ -72,14 +72,15 @@ cat >user-data.tmp <<EOF
 echo AWSAccessKeyId=$AWS_ACCESS_KEY > /root/.aws.creds
 echo AWSSecretKey=$AWS_SECRET_KEY >> /root/.aws.creds
 export TERM="linux"
-rm /var/lib/apt/lists/* -vf 
+#rm /var/lib/apt/lists/* -vf 
 echo "apt-getting" >> /root/log.txt 2>&1
 apt-get update >> /root/log.txt 2>&1
 apt-get install -y jq  >> /root/log.txt 2>&1
-apt-get install -y python-pip python-setuptools >> /root/log.txt 2>&1
+#apt-get install -y python-pip python-setuptools >> /root/log.txt 2>&1
+apt-get install -y awscli >> /root/log.txt 2>&1
 apt-get install -y git >> /root/log.txt 2>&1
 
-pip install awscli >> /root/log.txt 2>&1
+#pip install awscli >> /root/log.txt 2>&1
 
 cd /root
 echo "cloning_file" >> /root/log.txt 2>&1
@@ -109,7 +110,7 @@ cat >specs.tmp <<EOF
       "Ebs": {
         "DeleteOnTermination": true,
         "VolumeType": "gp2",
-        "VolumeSize": 128
+        "VolumeSize": 64
       }
     }
   ],
